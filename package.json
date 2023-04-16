@@ -27,9 +27,9 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "eslint": "^8.38.0",
-    "tedis": "^0.1.12",
     "cuid": "^2.1.4",
-    "inversify": "^5.0.1"
+    "eslint": "^8.38.0",
+    "inversify": "^5.0.1",
+    "tedis": "^0.1.12"
   }
 }

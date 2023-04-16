@@ -1,39 +1,127 @@
-- [reference](https://www.testim.io/blog/typescript-unit-testing-101/)
-- [web](https://github.com/microsoft/TypeScript-Node-Starter)
-
-### Project infrastructure
-
-```text
-    root
-        src
-        tests
+## Create TypeScript Project
+#### create folders
+```shell
+mkdir inject_demo
+cd inject_demo
+mkdir src
 ```
 
-#### initilize projec in the project folder
-
+#### create package.json
 ```shell
-npm init -y
+npm init --yes
+npm install
 ```
 
-## Project need npm install
-
+#### Using WebStorm open project
+#### Install typescript
 ```shell
-npm install typescript --save-dev
 npm i -D typescript ts-node
-npm install --save-dev typescript tslint @types/node
-npm install eslint
 ```
-
-## Type script project setting
-
-- setup tsconfig create tsconfig.json
-
+#### Setup tsconfig
 ```shell
 ./node_modules/.bin/tsc --init
 ```
+#### Create a typescript file index.ts
+```shell
+echo 'console.log("Hi")' > src/index.ts
+```
+##### Run the script
+The output shows our message: Hi
+```shell
+node --loader ts-node/esm src/index.ts
+```
 
-#### change the tsconfig.json
+##### Next Step update package.json
+```text
+{
+    "scripts": {
+        "start": "node --loader ts-node/esm src/index.ts"
+    }
+}
+```
+Run shell
+```shell
+npm start
+```
+The output shows our message: Hi
 
+
+## Unit Test Setting
+#### add following to index.ts
+```typescript
+export function add(numbers: string): number {
+    let integers = numbers.split(',').map(x => parseInt(x));
+    let negatives = integers.filter(x => x < 0);
+
+    if (negatives.length > 0)
+        throw new RangeError('Negatives are not allowed: ' + negatives.join(', '));
+
+    return integers
+        .filter(x => x <= 1000)
+        .reduce((a, b) => a + b, 0);
+}
+
+let result = add('1, 2, 4, 5');
+console.log(result);
+```
+#### Run 
+```shell
+npm start
+```
+The output shows our message: Hi 12
+
+
+#### install jest
+```shell
+npm install jest --save-dev
+```
+#### install ts-ject
+```shell
+npm install ts-jest --save-dev
+```
+
+#### install jext types
+```shell
+npm install @types/jest --save-dev
+```
+
+#### create test class for index.ts
+```shell
+touch tests/index.test.ts
+```
+#### copy tp index.test.ts
+```typescript
+import { add } from '../src/index';
+
+describe('testing index file', () => {
+  test('empty string should result in zero', () => {
+    expect(add('')).toBe(0);
+  });
+});
+```
+
+#### create a file named jest.config.js
+```shell
+touch jest.config.js
+```
+#### copy following to it
+```typescript
+module.exports = {
+  transform: {'^.+\\.ts?$': 'ts-jest'},
+  testEnvironment: 'node',
+  testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
+};
+```
+#### in the webstorm
+click the test 
+
+
+#### setup tsconfig create tsconfig.json
+```shell
+./node_modules/.bin/tsc --init
+```
+##### Copy 
 ```json
 {
   "compilerOptions": {
@@ -50,35 +138,15 @@ npm install eslint
 }
 ```
 
-## Unit test
-
-#### need npm install
-
+#### install tslint
 ```shell
-npm install jest --save-dev
-npm install ts-jest --save-dev
-npm install @types/jest --save-dev
+npm install tslint
 ```
-
-#### add jest.config.js
-
-```js
-module.exports = {
-transform: {'^.+\\.ts?$': 'ts-jest'},
-testEnvironment: 'node',
-testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
-moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
-};
-```
-
-## tslint setting
-
+##### create tslint.json
 ```shell
 ./node_modules/.bin/tslint --init
 ```
-
-#### tslint.json will be created, add follow to tslint.json
-
+##### copy to tslint.json
 ```json
 {
   "defaultSeverity": "error",
@@ -91,35 +159,49 @@ moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
   }
 }
 ```
-
-## eslint setting
-
+##### install eslione
 ```shell
-touch .eslintrc.json
+npm install eslint
+```
+#### install esline inject and config, 
+```shell
+npm init @eslint/config
+```
+eslintrc.json shoud be created
+
+
+
+### Add more script to package.json
+```json
+{
+  "scripts": {
+    "build-ts": "tsc",
+    "build": "npm run build-ts && npm run lint",
+    "debug": "nodemon --inspect dist/index.js",
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix"
+  }
+}
 ```
 
-#### change it with
-
+##### .eslintrc.json
 ```json
 {
     "env": {
         "browser": true,
+        "commonjs": true,
         "es2021": true
     },
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended"
     ],
     "overrides": [
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+        "ecmaVersion": "latest"
     },
     "plugins": [
-        "react",
         "@typescript-eslint"
     ],
     "rules": {
@@ -128,12 +210,8 @@ touch .eslintrc.json
 
 ```
 
-## Change package.json
 
-```text
-   "build-ts": "tsc",
-   "build": "npm run build-ts && npm run lint",
-   "debug": "nodemon --inspect dist/index.js",
-   "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix"
-   
-```
+#### This are reference links
+- [typescript-unit-testing](https://www.testim.io/blog/typescript-unit-testing-101/)
+- [fastest-way-to-start-a-typescript-project](https://www.mailslurp.com/blog/fastest-way-to-start-a-typescript-project/)
+
